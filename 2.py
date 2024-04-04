@@ -1,23 +1,34 @@
 import sys
-
-
-def print_help(msg=""):
-    print(f"Usage: {sys.argv[0]} [-h] [--log LOG] [--base BASE] int [int ...]\n{msg}")
+import os
 
 
 def main(args):
-    table = {}
-    for arg in args[1:]:
-        key, value = arg.split("=")
-        table[key] = value
-
-    if args[0] == '--sort':
-        table = sorted(table.items())
-        for key, value in table:
-            print(f"Key: {key} Value: {value}")
-        return
-    else:
-        for key, value in table:
-            print(f"Key: {key} Value: {value}")
+    if len(args) < 2 or not os.path.isfile(args[-1]):
+        print("ERROR")
         return
 
+    print(args[:1])
+
+    file_path = args[-1]
+    count_lines = "--count" in args
+    number_lines = "--num" in args
+    sort_lines = "--sort" in args
+
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+        if sort_lines:
+            lines.sort()
+
+        if number_lines:
+            for i, line in enumerate(lines, start=1):
+                print(f"{i} {line.strip()}")
+        else:
+            for line in lines:
+                print(line.strip())
+
+        if count_lines:
+            print(f"rows count: {len(lines)}")
+
+
+main(sys.argv)
